@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/types/express/index.d.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/controllers/uploadcontrollers.ts","./src/middleware/multermiddleware.ts","./src/middleware/protected.ts","./src/routes/imagesroutes.ts","./src/types/express/index.d.ts","./src/utilities/cloudinary.ts","./src/utilities/transformimagewithprompt.ts"],"version":"5.8.3"}
