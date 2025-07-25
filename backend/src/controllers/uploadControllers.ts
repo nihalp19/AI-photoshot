@@ -7,7 +7,7 @@ interface AuthenticatedRequest extends Request {
   userId: string;
 }
 
-export const handleUploadImages = async (req: AuthenticatedRequest, res: Response) => {
+export const handleUploadImages = async (req: any, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
     const prompt = req.body.prompt as string;
