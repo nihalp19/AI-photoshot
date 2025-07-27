@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Chrome } from 'lucide-react';
+import { useSignIn } from '@clerk/clerk-react';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,10 +11,24 @@ const LoginPage = () => {
     password: ''
   });
 
+  const { signIn } = useSignIn();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
     console.log('Login:', formData);
+    // TODO: handle manual email/password login via Clerk API if needed
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn?.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sign-in-callback",       // Clerk’s intermediate redirect
+        redirectUrlComplete: "/dashboard",      // Where to land after login
+      });
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+    }
   };
 
   return (
@@ -22,7 +37,7 @@ const LoginPage = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -49,6 +64,7 @@ const LoginPage = () => {
 
           {/* Google Sign In Button */}
           <motion.button
+            onClick={handleGoogleSignIn}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -75,7 +91,7 @@ const LoginPage = () => {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                   placeholder="Enter your email"
                   required
@@ -90,7 +106,7 @@ const LoginPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full pl-10 pr-12 py-3 bg-black/50 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                   placeholder="Enter your password"
                   required
@@ -116,7 +132,10 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-400">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+              <Link
+                to="/signup"
+                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+              >
                 Sign up
               </Link>
             </p>
